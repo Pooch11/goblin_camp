@@ -290,7 +290,7 @@ namespace {
 }
 
 void ConfirmStartNewGame() {
-	boost::function<void(void)> run(boost::bind(&Game::LoadingScreen, &StartNewGame));
+	boost::function<void(void)> run(std::bind(&Game::LoadingScreen, &StartNewGame));
 	
 	if (Game::Inst()->Running()) {
 		MessageBox::ShowMessageBox(

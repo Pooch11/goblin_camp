@@ -698,7 +698,7 @@ void Construction::ResolveProducts() {
 				// Could use bit more complicated lambda expression to eliminate
 				// separate predicate function entirely, but I think this is more
 				// clear to people not used to Boost.Lambda
-				boost::bind(_ConstructionNameEquals, _1, itemPreset.constructedInRaw)
+				std::bind(_ConstructionNameEquals, _1, itemPreset.constructedInRaw)
 			);
 			
 			if (conIt != Construction::Presets.end()) {
@@ -834,7 +834,7 @@ void Construction::Update() {
 				NPC::Presets[monsterType].tags.end() ? TCODColor::green : TCODColor::red;
 
 			if (announceColor == TCODColor::red && Config::GetCVar<bool>("pauseOnDanger")) 
-				Game::Inst()->AddDelay(UPDATES_PER_SECOND, boost::bind(&Game::Pause, Game::Inst()));
+				Game::Inst()->AddDelay(UPDATES_PER_SECOND, std::bind(&Game::Pause, Game::Inst()));
 
 			int amount = Game::DiceToInt(NPC::Presets[monsterType].group);
 			if (amount == 1) {

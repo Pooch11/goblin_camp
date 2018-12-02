@@ -253,7 +253,7 @@ void TileSet::DrawBaseConstruction(int screenX, int screenY, Construction * cons
 										? defaultConstructionSprite : constructionSprites[hint]);
 	if (spriteSet.IsConnectionMap()) {
 		ConstructionType type = construction->Type();
-		spriteSet.Draw(screenX, screenY, boost::bind(&ConstructionConnectTo, type, worldPos, _1));
+		spriteSet.Draw(screenX, screenY, std::bind(&ConstructionConnectTo, type, worldPos, _1));
 	} else {
 		spriteSet.Draw(screenX, screenY, worldPos - construction->Position());
 	}
@@ -266,7 +266,7 @@ void TileSet::DrawUnderConstruction(int screenX, int screenY, Construction * con
 	if (spriteSet.HasUnderConstructionSprites()) {
 		if (spriteSet.IsConnectionMap()) {
 			ConstructionType type = construction->Type();
-			spriteSet.DrawUnderConstruction(screenX, screenY, boost::bind(&ConstructionConnectTo, type, worldPos, _1));
+			spriteSet.DrawUnderConstruction(screenX, screenY, std::bind(&ConstructionConnectTo, type, worldPos, _1));
 		} else {
 			spriteSet.DrawUnderConstruction(screenX, screenY, worldPos - construction->Position());
 		}
@@ -281,7 +281,7 @@ void TileSet::DrawUnreadyTrap(int screenX, int screenY, Construction * trap, con
 										? defaultConstructionSprite : constructionSprites[hint]);
 	if (spriteSet.IsConnectionMap()) {
 		ConstructionType type = trap->Type();
-		spriteSet.DrawUnreadyTrap(screenX, screenY, boost::bind(&ConstructionConnectTo, type, worldPos, _1));
+		spriteSet.DrawUnreadyTrap(screenX, screenY, std::bind(&ConstructionConnectTo, type, worldPos, _1));
 	} else {
 		spriteSet.DrawUnreadyTrap(screenX, screenY, worldPos - trap->Position());
 	}

@@ -458,8 +458,8 @@ void Game::BumpEntity(int uid) {
 void Game::DoNothing() {}
 
 void Game::Exit(bool confirm) {
-	//boost::function<void()> exitFunc = boost::bind(&Game::Running, Game::Inst(), false);
-	boost::function<void()> exitFunc = boost::bind(&exit, 0);
+	//boost::function<void()> exitFunc = std::bind(&Game::Running, Game::Inst(), false);
+	boost::function<void()> exitFunc = std::bind(&exit, 0);
 
 	if (confirm) {
 		MessageBox::ShowMessageBox("Really exit?", exitFunc, "Yes", NULL, "No");
@@ -1083,7 +1083,7 @@ void Game::Update() {
 		gameOver = true;
 		//Game over, display stats
 		DisplayStats();
-		MessageBox::ShowMessageBox("Do you wish to keep watching?", NULL, "Keep watching", boost::bind(&Game::GameOver, Game::Inst()), "Quit");
+		MessageBox::ShowMessageBox("Do you wish to keep watching?", NULL, "Keep watching", std::bind(&Game::GameOver, Game::Inst()), "Quit");
 	}
 
 	for (std::list<boost::weak_ptr<FireNode> >::iterator fireit = fireList.begin(); fireit != fireList.end();) {
@@ -2272,7 +2272,7 @@ void Game::CreateFire(Coordinate pos, int temperature) {
 	if (fireList.empty()) {
 		Announce::Inst()->AddMsg("Fire!", TCODColor::red, pos);
 		if (Config::GetCVar<bool>("pauseOnDanger"))
-			Game::Inst()->AddDelay(UPDATES_PER_SECOND, boost::bind(&Game::Pause, Game::Inst()));
+			Game::Inst()->AddDelay(UPDATES_PER_SECOND, std::bind(&Game::Pause, Game::Inst()));
 	}
 
 	boost::weak_ptr<FireNode> fire(Map::Inst()->GetFire(pos));
@@ -2469,17 +2469,17 @@ void Game::DisplayStats() {
 	productionFrame->AddComponent(new Label((boost::format("items: %d") % Stats::Inst()->GetItemsBuilt()).str(),1,1,TCOD_LEFT));
 	productionFrame->AddComponent(new ScrollPanel(1, 2, 23, 15,
 		new UIList<std::pair<std::string, unsigned>, boost::unordered_map<std::string, unsigned> >(&Stats::Inst()->itemsBuilt, 0, 0, 24, Stats::Inst()->itemsBuilt.size(),
-		boost::bind(DrawText, _1, _2, _3, _4, _5, _6, _7), 0, false, 0)));
+		std::bind(DrawText, _1, _2, _3, _4, _5, _6, _7), 0, false, 0)));
 	productionFrame->AddComponent(new Label((boost::format("constructions: %d") % Stats::Inst()->GetConstructionsBuilt()).str(),1,17,TCOD_LEFT));
 	productionFrame->AddComponent(new ScrollPanel(1, 18, 23, 15,
 		new UIList<std::pair<std::string, unsigned>, boost::unordered_map<std::string, unsigned> >(&Stats::Inst()->constructionsBuilt, 0, 0, 24, Stats::Inst()->constructionsBuilt.size(),
-		boost::bind(DrawText, _1, _2, _3, _4, _5, _6, _7), 0, false, 0)));
+		std::bind(DrawText, _1, _2, _3, _4, _5, _6, _7), 0, false, 0)));
 	contents->AddComponent(productionFrame);
 
 	Frame *deathFrame = new Frame("Deaths", std::vector<Drawable *>(), 51, 1, 25, 34);
 	deathFrame->AddComponent(new ScrollPanel(1, 1, 23, 32,
 		new UIList<std::pair<std::string, unsigned>, boost::unordered_map<std::string, unsigned> >(&Stats::Inst()->deaths, 0, 0, 24, Stats::Inst()->deaths.size(),
-		boost::bind(DrawDeathText, _1, _2, _3, _4, _5, _6, _7), 0, false, 0)));
+		std::bind(DrawDeathText, _1, _2, _3, _4, _5, _6, _7), 0, false, 0)));
 	contents->AddComponent(deathFrame);
 
 	Button *okButton = new Button("OK", NULL, 33, 37, 10, 'o', true);

@@ -64,9 +64,9 @@ menuOpen(false),
 {
 	currentMenu = Menu::MainMenu();
 	menuHistory.reserve(10);
-	placementCallback = boost::bind(Game::CheckPlacement, _1, _2, std::set<TileType>());
-	callback = boost::bind(Game::PlaceConstruction, _1, 0);
-	rectCallback = boost::bind(Game::PlaceStockpile, _1, _2, 0, 0);
+	placementCallback = std::bind(Game::CheckPlacement, _1, _2, std::set<TileType>());
+	callback = std::bind(Game::PlaceConstruction, _1, 0);
+	rectCallback = std::bind(Game::PlaceStockpile, _1, _2, 0, 0);
 	event = (TCOD_event_t)0; // FIXME: bug Doryen to have TCOD_EVENT_NONE
 	mouseInput = TCODMouse::getStatus();
 	oldMouseInput = mouseInput;
@@ -668,8 +668,8 @@ void UI::SetRectCallback(boost::function<void(Coordinate,Coordinate)> newCallbac
 void UI::SetPlacementCallback(boost::function<bool(Coordinate,Coordinate)> newCallback) {placementCallback = newCallback;}
 
 void UI::ChooseConstruct(ConstructionType construct, UIState state) {
-	UI::Inst()->SetCallback(boost::bind(Game::PlaceConstruction, _1, construct));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckPlacement, _1, _2, Construction::Presets[construct].tileReqs));
+	UI::Inst()->SetCallback(std::bind(Game::PlaceConstruction, _1, construct));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckPlacement, _1, _2, Construction::Presets[construct].tileReqs));
 	UI::Inst()->blueprint(Construction::Blueprint(construct));
 	UI::Inst()->state(state);
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Construct);
@@ -680,13 +680,13 @@ void UI::ChooseConstruct(ConstructionType construct, UIState state) {
 void UI::ChooseStockpile(ConstructionType stockpile) {
 	int stockpileSymbol = '%';
 	if (Construction::Presets[stockpile].tags[STOCKPILE]) {
-		UI::Inst()->SetCallback(boost::bind(Game::PlaceStockpile, _1, _1, stockpile, stockpileSymbol));
+		UI::Inst()->SetCallback(std::bind(Game::PlaceStockpile, _1, _1, stockpile, stockpileSymbol));
 		UI::Inst()->state(UIPLACEMENT);
 	} else {
-		UI::Inst()->SetRectCallback(boost::bind(Game::PlaceStockpile, _1, _2, stockpile, stockpileSymbol));
+		UI::Inst()->SetRectCallback(std::bind(Game::PlaceStockpile, _1, _2, stockpile, stockpileSymbol));
 		UI::Inst()->state(UIRECTPLACEMENT);
 	}
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckPlacement, _1, _2, Construction::Presets[stockpile].tileReqs));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckPlacement, _1, _2, Construction::Presets[stockpile].tileReqs));
 	UI::Inst()->blueprint(Construction::Blueprint(stockpile));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Stockpile);
 	UI::Inst()->HideMenu();
@@ -695,8 +695,8 @@ void UI::ChooseStockpile(ConstructionType stockpile) {
 
 void UI::ChooseTreeFelling() {
 	UI::Inst()->state(UIRECTPLACEMENT);
-	UI::Inst()->SetRectCallback(boost::bind(Game::FellTree, _1, _2));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, _2));
+	UI::Inst()->SetRectCallback(std::bind(Game::FellTree, _1, _2));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, _2));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_TreeFelling);
 	UI::Inst()->HideMenu();
@@ -705,8 +705,8 @@ void UI::ChooseTreeFelling() {
 
 void UI::ChoosePlantHarvest() {
 	UI::Inst()->state(UIRECTPLACEMENT);
-	UI::Inst()->SetRectCallback(boost::bind(Game::HarvestWildPlant, _1, _2));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, _2));
+	UI::Inst()->SetRectCallback(std::bind(Game::HarvestWildPlant, _1, _2));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, _2));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Harvest);
 	UI::Inst()->HideMenu();
@@ -720,24 +720,24 @@ void UI::ChooseOrderTargetCoordinate(boost::shared_ptr<Squad> squad, Order order
 		autoClose = false;
 		order = GUARD;
 	}
-	UI::Inst()->SetCallback(boost::bind(Game::SetSquadTargetCoordinate, order, _1, squad, autoClose));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, Coordinate(1,1)));
+	UI::Inst()->SetCallback(std::bind(Game::SetSquadTargetCoordinate, order, _1, squad, autoClose));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, Coordinate(1,1)));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Order);
 }
 
 void UI::ChooseOrderTargetEntity(boost::shared_ptr<Squad> squad, Order order) {
 	UI::Inst()->state(UIPLACEMENT);
-	UI::Inst()->SetCallback(boost::bind(Game::SetSquadTargetEntity, order, _1, squad));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, Coordinate(1,1)));
+	UI::Inst()->SetCallback(std::bind(Game::SetSquadTargetEntity, order, _1, squad));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, Coordinate(1,1)));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Order);
 }
 
 void UI::ChooseDesignateTree() {
 	UI::Inst()->state(UIRECTPLACEMENT);
-	UI::Inst()->SetRectCallback(boost::bind(Game::DesignateTree, _1, _2));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, _2));
+	UI::Inst()->SetRectCallback(std::bind(Game::DesignateTree, _1, _2));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, _2));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Tree);
 	UI::Inst()->HideMenu();
@@ -746,8 +746,8 @@ void UI::ChooseDesignateTree() {
 
 void UI::ChooseDismantle() {
 	UI::Inst()->state(UIRECTPLACEMENT);
-	UI::Inst()->SetRectCallback(boost::bind(Game::DismantleConstruction, _1, _2));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, _2));
+	UI::Inst()->SetRectCallback(std::bind(Game::DismantleConstruction, _1, _2));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, _2));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Dismantle);
 	UI::Inst()->HideMenu();
@@ -756,8 +756,8 @@ void UI::ChooseDismantle() {
 
 void UI::ChooseUndesignate() {
 	UI::Inst()->state(UIRECTPLACEMENT);
-	UI::Inst()->SetRectCallback(boost::bind(Game::Undesignate, _1, _2));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, _2));
+	UI::Inst()->SetRectCallback(std::bind(Game::Undesignate, _1, _2));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, _2));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Undesignate);
 	UI::Inst()->HideMenu();
@@ -766,8 +766,8 @@ void UI::ChooseUndesignate() {
 
 void UI::ChooseDesignateBog() {
 	UI::Inst()->state(UIRECTPLACEMENT);
-	UI::Inst()->SetRectCallback(boost::bind(Game::DesignateBog, _1, _2));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTileType, TILEBOG, _1, _2));
+	UI::Inst()->SetRectCallback(std::bind(Game::DesignateBog, _1, _2));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTileType, TILEBOG, _1, _2));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Bog);
 	UI::Inst()->HideMenu();
@@ -867,8 +867,8 @@ void UI::ChooseCreateNPC() {
 
 	if (npc >= 0) {
 		UI::Inst()->state(UIPLACEMENT);
-		UI::Inst()->SetCallback(boost::bind(&Game::CreateNPC, Game::Inst(), _1, NPCType(npc)));
-		UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, Coordinate(1,1)));
+		UI::Inst()->SetCallback(std::bind(&Game::CreateNPC, Game::Inst(), _1, NPCType(npc)));
+		UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, Coordinate(1,1)));
 		UI::Inst()->blueprint(Coordinate(1,1));
 		Game::Inst()->Renderer()->SetCursorMode(NPC::Presets[npc]);
 	}
@@ -893,9 +893,9 @@ void UI::ChooseCreateItem() {
 
 	if (item >= 0) {
 		UI::Inst()->state(UIPLACEMENT);
-		UI::Inst()->SetCallback(boost::bind(&Game::CreateItem, Game::Inst(), _1, ItemType(item), false,
+		UI::Inst()->SetCallback(std::bind(&Game::CreateItem, Game::Inst(), _1, ItemType(item), false,
 			0, std::vector<boost::weak_ptr<Item> >(), boost::shared_ptr<Container>()));
-		UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, Coordinate(1,1)));
+		UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, Coordinate(1,1)));
 		UI::Inst()->blueprint(Coordinate(1,1));
 		Game::Inst()->Renderer()->SetCursorMode(Item::Presets[item]);
 	}
@@ -904,8 +904,8 @@ void UI::ChooseCreateItem() {
 
 void UI::ChooseDig() {
 	UI::Inst()->state(UIRECTPLACEMENT);
-	UI::Inst()->SetRectCallback(boost::bind(Game::Dig, _1, _2));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckPlacement, _1, _2, std::set<TileType>()));
+	UI::Inst()->SetRectCallback(std::bind(Game::Dig, _1, _2));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckPlacement, _1, _2, std::set<TileType>()));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Dig);
 	UI::Inst()->HideMenu();
@@ -924,8 +924,8 @@ void UI::ChooseChangeTerritory(bool add) {
 		Announce::Inst()->AddMsg("Automatic territory handling disabled", TCODColor::cyan);
 	}
 	UI::Inst()->state(UIRECTPLACEMENT);
-	UI::Inst()->SetRectCallback(boost::bind(&Map::SetTerritoryRectangle, Map::Inst(), _1, _2, add));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, _2));
+	UI::Inst()->SetRectCallback(std::bind(&Map::SetTerritoryRectangle, Map::Inst(), _1, _2, add));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, _2));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(add ? Cursor_AddTerritory : Cursor_RemoveTerritory);
 	UI::Inst()->HideMenu();
@@ -934,8 +934,8 @@ void UI::ChooseChangeTerritory(bool add) {
 
 void UI::ChooseGatherItems() {
 	UI::Inst()->state(UIRECTPLACEMENT);
-	UI::Inst()->SetRectCallback(boost::bind(&Game::GatherItems, Game::Inst(), _1, _2));
-	UI::Inst()->SetPlacementCallback(boost::bind(Game::CheckTree, _1, _2));
+	UI::Inst()->SetRectCallback(std::bind(&Game::GatherItems, Game::Inst(), _1, _2));
+	UI::Inst()->SetPlacementCallback(std::bind(Game::CheckTree, _1, _2));
 	UI::Inst()->blueprint(Coordinate(1,1));
 	Game::Inst()->Renderer()->SetCursorMode(Cursor_Gather);
 	UI::Inst()->HideMenu();

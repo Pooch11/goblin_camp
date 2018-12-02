@@ -1499,7 +1499,7 @@ void NPC::findPath(Coordinate target) {
 		++pathingThreadCount;
 		threadCountMutex.unlock();
 		pathMutex.unlock();
-		boost::thread pathThread(boost::bind(tFindPath, path, pos.X(), pos.Y(), target.X(), target.Y(), this, true));
+		boost::thread pathThread(std::bind(tFindPath, path, pos.X(), pos.Y(), target.X(), target.Y(), this, true));
 	} else {
 		threadCountMutex.unlock();
 		pathMutex.unlock();
@@ -2345,12 +2345,12 @@ NPCType NPC::StringToNPCType(std::string typeName) {
 int NPC::GetNPCSymbol() const { return Presets[type].graphic; }
 
 void NPC::InitializeAIFunctions() {
-	FindJob = boost::bind(&Faction::FindJob, Faction::factions[faction], _1);
-	React = boost::bind(NPC::AnimalReact, _1);
+	FindJob = std::bind(&Faction::FindJob, Faction::factions[faction], _1);
+	React = std::bind(NPC::AnimalReact, _1);
 
 	if (NPC::Presets[type].ai == "PlayerNPC") {
-		FindJob = boost::bind(NPC::JobManagerFinder, _1);
-		React = boost::bind(NPC::PlayerNPCReact, _1);
+		FindJob = std::bind(NPC::JobManagerFinder, _1);
+		React = std::bind(NPC::PlayerNPCReact, _1);
 	}
 }
 

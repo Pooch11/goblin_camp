@@ -85,12 +85,12 @@ namespace Script { namespace API {
 				getID = &Construction::StringToConstructionType;
 			break;
 			case EItem:
-				//spawn = boost::bind(&Game::CreateItem, Game::Inst(), _1, _2); // this makes the compiler cry for some reason
+				//spawn = std::bind(&Game::CreateItem, Game::Inst(), _1, _2); // this makes the compiler cry for some reason
 				spawn = &_SpawnItem;
 				getID = &Item::StringToItemType;
 			break;
 			case ENPC:
-				spawn = boost::bind(&Game::CreateNPC, Game::Inst(), _1, _2);
+				spawn = std::bind(&Game::CreateNPC, Game::Inst(), _1, _2);
 				getID = &NPC::StringToNPCType;
 			break;
 			case EPlant:

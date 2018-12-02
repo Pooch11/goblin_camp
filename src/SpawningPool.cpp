@@ -45,10 +45,10 @@ SpawningPool::SpawningPool(ConstructionType type, const Coordinate& target) : Co
 {
 	container = new UIContainer(std::vector<Drawable*>(), 0, 0, 16, 11);
 	dialog = new Dialog(container, "Spawning Pool", 16, 10);
-	container->AddComponent(new ToggleButton("Dump filth", boost::bind(&SpawningPool::ToggleDumpFilth, this), 
-		boost::bind(&SpawningPool::DumpFilth, this), 2, 2, 12));
-	container->AddComponent(new ToggleButton("Dump corpses", boost::bind(&SpawningPool::ToggleDumpCorpses, this), 
-		boost::bind(&SpawningPool::DumpCorpses, this), 1, 6, 14));
+	container->AddComponent(new ToggleButton("Dump filth", std::bind(&SpawningPool::ToggleDumpFilth, this), 
+		std::bind(&SpawningPool::DumpFilth, this), 2, 2, 12));
+	container->AddComponent(new ToggleButton("Dump corpses", std::bind(&SpawningPool::ToggleDumpCorpses, this), 
+		std::bind(&SpawningPool::DumpCorpses, this), 1, 6, 14));
 	corpseContainer = boost::shared_ptr<Container>(new Container(target, 0, 1000, -1));
 }
 
